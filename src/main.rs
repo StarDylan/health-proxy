@@ -38,25 +38,32 @@ async fn main() -> std::io::Result<()> {
         .service(post_health)
         .service(delete_health)
     })
-        .bind(("127.0.0.1", 8080))?
+        .bind(("0.0.0.0", 8080))?
         .run()
         .await?;
 
     Ok(())
 }
 
-#[derive(sqlx::FromRow, serde::Serialize, Deserialize)]
+#[derive(sqlx::Decode, sqlx::FromRow, serde::Serialize, Deserialize, Debug)]
 struct HealthData {
     calories: i64,
 }
 
+#[derive(sqlx::Decode, sqlx::FromRow, serde::Serialize, Deserialize, Debug)]
+struct TimestampedHealthData {
+    timestamp: i64,
+    #[sqlx(flatten)]
+    health_data: HealthData,
+}
+
 #[get("/health")]
 async fn get_health(data: web::Data<AppState>,) -> impl Responder {
-    let result = sqlx::query_as::<_, HealthData>("SELECT * FROM data")
+    let result = sqlx::query_as::<_, TimestampedHealthData>("SELECT * FROM data")
         .fetch_all(&data.db)
         .await
         .unwrap();
-    
+
     web::Json(result)
 }
 
