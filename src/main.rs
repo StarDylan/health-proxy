@@ -1,4 +1,4 @@
-use actix_web::{delete, get, post, put, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{delete, get, put, web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
 use sqlx::{migrate::MigrateDatabase, Sqlite, SqlitePool, Row};
 
