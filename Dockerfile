@@ -27,6 +27,6 @@ FROM alpine as runner
 
 # Copy the binary from the builder stage
 WORKDIR /app
-COPY --from=builder /app/target/release/app app
+COPY --from=builder /app/target/release/health-proxy app
 
 CMD ["./app"]
